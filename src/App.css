@@ -1,5 +1,156 @@
-.App {
-  text-align: center;
+.flex-container {
+            /* text-align: center; */
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    padding: 1rem;
+    flex-direction: column;
+}
+
+.page-container {
+  margin: auto;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 100%;
+  gap: 1rem;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+}
+
+.flexer {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: -1rem;
+}
+
+.btnsect{
+  display: block;
+  width: 100%;
+}
+
+.bttn#ubt{
+  display: block;
+  width: 100%;
+}
+
+.flex-con-sm{
+      /* text-align: center; */
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      /* gap: 1rem; */
+      flex-wrap: wrap;
+      /* padding: 5rem; */
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-evenly;
+}
+
+.form-wrap{
+  width: 40%;
+  border: 1px solid #eee;
+  margin: auto;
+  padding: 1rem;
+  display: flex;
+  border-radius: .5rem;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.table{
+  width: 50%;
+}
+
+
+.ribbons {
+  display: flex;
+  margin: 1rem;
+}
+
+.center-container{
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  border: 1px solid #eee
+}
+
+.fleft {
+  width: 70%;
+}
+
+.center-container-down{
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  padding: 1rem;
+  border: 1px solid #eee;
+}
+
+.navbar {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: .5rem;
+  border: 1px solid #eee;
+  padding-bottom: .5rem;
+}
+
+.form-container {
+     /* text-align: center; */
+     width: 100%;
+     height: 100vh;
+     display: flex;
+     justify-content: center;
+     align-items: center;
+     margin-top: -30px;
+     /* margin: auto; */
+}
+
+img, svg {
+  /* vertical-align: middle; */
+  width: 50%;
+}
+
+form {
+  max-width: 500px;
+  border: 1px solid #eee;
+  margin: auto;
+  padding: 1rem;
+  display: flex;
+  border-radius: .5rem;
+  flex-direction: column;
+}
+
+.formsect {
+  width: 30%;
+}
+
+.form-item{
+  width: 500px;
+  border: 1px solid #eee;
+  margin: auto;
+  padding: 1rem;
+  display: flex;
+  border-radius: .5rem;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  justify-content: center;
 }
 
 .App-logo {
