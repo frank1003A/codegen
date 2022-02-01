@@ -3,7 +3,8 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { Button, Row, Table } from "react-bootstrap";
 import { Form } from "react-bootstrap";
-import CardNoButton from "./CardNoButton";
+import { Modal } from 'react-bootstrap';
+import Toast from '../components/Toast'
 
 const UpdateItem = () => {
   const [customerName, setcustomerName] = useState("");
@@ -17,6 +18,11 @@ const UpdateItem = () => {
   const [collected, setcollected] = useState(false);
   const [itemTable, setitemTable] = useState([]);
   const [userId, setuserId] = useState(null);
+  const [searchValue, setsearchValue] = useState("");
+  const [show, setShow] = useState(false);
+
+ const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
 
   const api = axios.create({
     baseURL: "http://localhost:3000/codegen",
@@ -150,28 +156,35 @@ const UpdateItem = () => {
   const matchpayandpayee = () => {
     if ( paid === true && paidBy === "") {
       return (
-        <Button disabled className="bttn" id="ubt">
+        <Button disabled>
           Update
         </Button>
       );
     }
     if (!(customerName && customerNumber && Agent && Kilo)){
      return ( 
-        <Button disabled className="bttn" id="ubt">
+        <Button disabled >
           Update
         </Button>
         )
     }
     if (paid === true && amountPaid === 0){
       return ( 
-        <Button disabled className="bttn" id="ubt">
+        <Button disabled>
           Update
         </Button>
         )
     }
+    if (paid === true && datepaid === 'NaN-aN-aN') {{
+      return ( 
+        <Button disabled >
+          Update
+        </Button>
+        )
+    }}
      else {
       return (
-        <Button onClick={() => updateItem()} className="bttn" id="ubt">
+        <Button onClick={() => {updateItem()}} >
           Update
         </Button>
       );
@@ -190,7 +203,7 @@ const UpdateItem = () => {
     setpaidBy(itm[0].paid[0]["paidBy"]);
     setpaid(itm[0].paid[0]["pay"]);
     setamountPaid(itm[0].paid[0]["amountpaid"]);
-    setdatepaid(itm[0].paid[0]["datePaid"]);
+    setdatepaid(convert(itm[0].paid[0]["datePaid"]));
     setcollected(itm[0].collected[0]["collect"]);
   };
 
@@ -227,8 +240,8 @@ const UpdateItem = () => {
     let date = new Date(str),
       mnth = ("0" + (date.getMonth() + 1)).slice(-2),
       day = ("0" + date.getDate()).slice(-2);
-    //return [date.getFullYear(), mnth, day].join("-");
-    return [mnth, day, date.getFullYear()].join("/");
+    return [date.getFullYear(), mnth, day].join("-");
+    //return [mnth, day, date.getFullYear()].join("/");
   };
 
   //delete item
@@ -249,8 +262,157 @@ const UpdateItem = () => {
   }, []);
 
   return (
-    <div className="flex-container">
-      <Form className="form-wrap">
+    <div className="u-container">
+      <div className="searchit" style={{ width: "100%" }}>
+        <Form.Control
+          type="search"
+          onChange={(e) => setsearchValue(e.target.value)}
+          placeholder="type a valid whatsApp Number or name to search customer "
+          style={{ width: "100%" }}
+        />
+        </div>
+        <div className="twrap">
+        <Table striped bordered hover size="sm">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>PHONE</th>
+            <th>Agent</th>
+            <th>Kilo</th>
+            <th>paid</th>
+            <th>paid By</th>
+            <th>Date paid</th>
+            <th>Amount paid</th>
+            <th>Collected</th>
+          </tr>
+        </thead>
+        <tbody>
+          {itemTable.map((data, idx) => {
+            return (
+              <tr key={idx}>
+                <td>{data.customerName}</td>
+                <td>{data.customerNumber}</td>
+                <td>{data.agent}</td>
+                <td>{data.kilo}</td>
+                <td>{data.paid[0]["pay"].toString()}</td>
+                <td>{data.paid[0]["paidBy"]}</td>
+                <td>{convert(data.paid[0]["datePaid"])}</td>
+                <td>{data.paid[0]["amountpaid"]}</td>
+                <td>{data.collected[0]["collect"].toString()}</td>
+                <td>
+                  <Button
+                    style={{ background: "orange" }}
+                    onClick={() => {
+                      selectItem(data._id);
+                      setuserId(data._id);
+                      handleShow()
+                    }}
+                  >
+                    Edit
+                  </Button>
+                </td>
+                <td>
+                  <Button variant="danger" onClick={() => deleteItem(data._id)}>
+                    Delete
+                  </Button>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </Table>
+
+        </div>
+
+      <Modal
+              show={show}
+              onHide={handleClose}
+              backdrop="static"
+              keyboard={false}
+            >
+              <Modal.Header closeButton>
+                <Modal.Title>Item Update (User)</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+              <Form className="form-wrap">
+        <Form.Group className="mb-3" controlId="formBasicEmail">
+          <Form.Label>Customer Name</Form.Label>
+          <Form.Control
+            type="text"
+            value={customerName}
+            onChange={(e) => {
+              setcustomerName(e.target.value);
+            }}
+            placeholder="customer name"
+          />
+          <Form.Text className="text-muted">Customer Name</Form.Text>
+        </Form.Group>
+
+        <Form.Group className="mb-3" controlId="formBasicEmail">
+          <Form.Label>WhatsApp Number</Form.Label>
+          <Form.Control
+            type="text"
+            value={customerNumber}
+            onChange={(e) =>
+              setcustomerNumber(e.target.value.replace(/\s+/g, ""))
+            }
+            placeholder="customer Number"
+            style={{ width: "100%" }}
+          />
+          <Form.Text className="text-muted">valid whatsApp Number</Form.Text>
+        </Form.Group>
+
+        <Form.Group className="mb-3" controlId="formBasicEmail">
+          <Form.Label>Agent</Form.Label>
+          <Form.Control
+            type="text"
+            value={Agent}
+            onChange={(e) => {
+              setAgent(e.target.value);
+            }}
+            placeholder="agent name"
+          />
+          <Form.Text className="text-muted">Agent Name</Form.Text>
+        </Form.Group>
+
+        <Form.Group className="mb-3" controlId="formBasicEmail">
+          <Form.Label>Kilo</Form.Label>
+          <Form.Control
+            type="text"
+            value={Kilo}
+            placeholder="item kilo"
+            onChange={(e) => {
+              setKilo(e.target.value);
+            }}
+          />
+          <Form.Text className="text-muted">Kilo.</Form.Text>
+        </Form.Group>
+
+        {showPayeeText()}
+
+        <div className="flexer" style={{ display: "flex", gap: "1rem" }}>
+          {checkPaidBox()}
+          {checkColBox()}
+        </div>
+      </Form>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button variant="secondary" onClick={handleClose}>
+                  Close
+                </Button>
+                {matchpayandpayee()}
+              </Modal.Footer>
+            </Modal>
+    </div>
+  );
+};
+
+export default UpdateItem;
+
+
+/**
+ 
+<Form className="form-wrap">
         <Form.Group className="mb-3" controlId="formBasicEmail">
           <Form.Label>Customer Name</Form.Label>
           <Form.Control
@@ -313,56 +475,9 @@ const UpdateItem = () => {
         <div className="btnsect">{matchpayandpayee()}</div>
       </Form>
 
-      <Table striped bordered hover size="sm" style={{ width: "60%" }}>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>PHONE</th>
-            <th>Agent</th>
-            <th>Kilo</th>
-            <th>paid</th>
-            <th>paid By</th>
-            <th>Date paid</th>
-            <th>Amount paid</th>
-            <th>Collected</th>
-          </tr>
-        </thead>
-        <tbody>
-          {itemTable.map((data, idx) => {
-            return (
-              <tr key={idx}>
-                <td>{data.customerName}</td>
-                <td>{data.customerNumber}</td>
-                <td>{data.agent}</td>
-                <td>{data.kilo}</td>
-                <td>{data.paid[0]["pay"].toString()}</td>
-                <td>{data.paid[0]["paidBy"]}</td>
-                <td>{convert(data.paid[0]["datePaid"])}</td>
-                <td>{data.paid[0]["amountpaid"]}</td>
-                <td>{data.collected[0]["collect"].toString()}</td>
-                <td>
-                  <Button
-                    style={{ background: "orange" }}
-                    onClick={() => {
-                      selectItem(data._id);
-                      setuserId(data._id);
-                    }}
-                  >
-                    Edit
-                  </Button>
-                </td>
-                <td>
-                  <Button variant="danger" onClick={() => deleteItem(data._id)}>
-                    Delete
-                  </Button>
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </Table>
-    </div>
-  );
-};
+       const [showToast, setshowToast] = useState(false);
+  const toggleshowToast = () => setshowToast(!showToast);
 
-export default UpdateItem;
+
+       {toggleshowToast === true ? <Toast toastHeader={<p>Success</p>} toastBody={'Item successfully updated' } /> : null}
+ */

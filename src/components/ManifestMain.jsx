@@ -1,87 +1,122 @@
-import React from 'react';
+import React from "react";
 import axios from "axios";
 import { useState, useEffect } from "react";
-import { Form, Button, Row, Table} from "react-bootstrap";
+import { Form, Button, Row, Table } from "react-bootstrap";
 import filesvg from "../assets/svg/file.svg";
 import * as XLSX from "xlsx";
 import ManifestView from "./ManifestView";
 import { useNavigate } from "react-router-dom";
 
 const ManifestMain = () => {
-    let navigate = useNavigate();
+  let navigate = useNavigate();
 
-    const [dateFrom, setdateFrom] = useState('');
-    const [dateTo, setdateTo] = useState('');
-    const [itemsDB, setitemsDB] = useState([]);
-    const [printData, setprintData] =  useState(false)
-  
-  
-    //initate api
-    const api = axios.create({
-      baseURL: "http://localhost:3000/codegen",
-    });
-  
-  
-    //get all item
-    const fetchItems = async () => {
-      try {
-        await api.get("/item").then((res) => {
-          console.log(res.data);
-          setitemsDB(res.data);
-        });
-      } catch (err) {
-        console.log(err);
-      }
-    };
-  
-    useEffect(() => {
-      fetchItems();
-    },[])
-  
-    //date format
-    const convert = (str) => {
-      let date = new Date(str),
-        mnth = ("0" + (date.getMonth() + 1)).slice(-2),
-        day = ("0" + date.getDate()).slice(-2);
-      //return [date.getFullYear(), mnth, day].join("-");
-      return [mnth, day, date.getFullYear()].join("/");
-    };
-  
-    // Returns an array of dates between the two dates
-    const getDatesBetween = (startDate, endDate) => {
-      const dates = [];
-  
-      // Strip hours minutes seconds etc.
-      let currentDate = new Date(
-        startDate.getFullYear(),
-        startDate.getMonth(),
-        startDate.getDate()
+  const [dateFrom, setdateFrom] = useState("");
+  const [dateTo, setdateTo] = useState("");
+  const [itemsDB, setitemsDB] = useState([]);
+  const [printData, setprintData] = useState(false);
+
+  //initate api
+  const api = axios.create({
+    baseURL: "http://localhost:3000/codegen",
+  });
+
+  //get all item
+  const fetchItems = async () => {
+    try {
+      await api.get("/item").then((res) => {
+        console.log(res.data);
+        setitemsDB(res.data);
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchItems();
+  }, []);
+
+  //date format
+  const convert = (str) => {
+    let date = new Date(str),
+      mnth = ("0" + (date.getMonth() + 1)).slice(-2),
+      day = ("0" + date.getDate()).slice(-2);
+    //return [date.getFullYear(), mnth, day].join("-");
+    return [mnth, day, date.getFullYear()].join("/");
+  };
+
+  // Returns an array of dates between the two dates
+  const getDatesBetween = (startDate, endDate) => {
+    const dates = [];
+
+    // Strip hours minutes seconds etc.
+    let currentDate = new Date(
+      startDate.getFullYear(),
+      startDate.getMonth(),
+      startDate.getDate()
+    );
+
+    while (currentDate <= endDate) {
+      dates.push(currentDate);
+
+      currentDate = new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth(),
+        currentDate.getDate() + 1 // Will increase month if over range
       );
-  
-      while (currentDate <= endDate) {
-        dates.push(currentDate);
-  
-        currentDate = new Date(
-          currentDate.getFullYear(),
-          currentDate.getMonth(),
-          currentDate.getDate() + 1 // Will increase month if over range
-        );
-      }
-      dates.forEach(date => convert(date))
-  
-      return convert(dates);
-    };
-  
-    const dates = getDatesBetween(new Date(dateFrom), new Date(dateTo));
-  
-    console.log(dates)
-  
-  
-    const showTable = (printTable) => {
-      if (printTable){
-        return (<>
-          <div className="print-view">
-             <Table id="tablegen" striped bordered hover size="sm" style={{ width: "100%" }}>
+    }
+    dates.forEach((date) => convert(date));
+
+    return convert(dates);
+  };
+
+  const dates = getDatesBetween(new Date(dateFrom), new Date(dateTo));
+
+  console.log(dates);
+
+  const disableClick = () => {
+    if (!(dateFrom && dateTo)) {
+      return (
+        <Button
+          className="bttn"
+          id="ubt"
+          variant="primary"
+          type="button"
+          disabled
+        >
+         Create Manifest
+        </Button>
+      );
+    } else {
+      return (
+        <Button
+          className="bttn"
+          id="ubt"
+          variant="primary"
+          type="button"
+          onClick={() => {
+            createManifest();
+          }}
+        >
+          Create Manifest
+        </Button>
+      );
+    }
+  };
+
+  const showTable = (printTable) => {
+    if (printTable) {
+      return (
+        <>
+          
+            <Table
+              id="tablegen"
+              striped
+              bordered
+              hover
+              size="sm"
+              style={{ width: "100%" }}
+            >
               <thead>
                 <tr>
                   <th>Phone Number</th>
@@ -121,63 +156,92 @@ const ManifestMain = () => {
                 })}
               </tbody>
             </Table>
-      
-            <div className="prtbtn">
-                <Button onClick={() => writeToExcelFile('xlsx', `manifest ${convert(new Date(Date.now()))}`)} >Print (Excel)</Button>
-            </div>
-        </div>
-          </>)
-      }else {
-        //do nothing
-      }
-      
+        </>
+      );
+    } else {
+      //do nothing
     }
-  
+  };
 
-    //create new xlsx file and save to pc
-    const writeToExcelFile = (fileExtension, fileName) => {
-      const table = document.getElementById("tablegen");
-      const wb = XLSX.utils.table_to_book(table, { sheet: "marybeth_sheet1"} );
-      return XLSX.writeFile(wb, fileName + "." + fileExtension || "sheetname." + (fileExtension || "xlsx"));
-    };
-  
-    const createManifest = () => {
-      setprintData(!printData);
-    }
-  
-  
-  
-    return (
-      <div className="center-container">  
-        <Form>
-          <Form.Group controlId="duedate">
-            <Form.Label>Start Date</Form.Label>
-            <Form.Control
-              type="date"
-              name="duedate"
-              placeholder="start date"
-              value={dateFrom}
-              onChange={(e) => setdateFrom(e.target.value)}
-            />
-            <Form.Text className="text-muted">start date</Form.Text>
-          </Form.Group>
-  
-          <Form.Group controlId="duedate">
-            <Form.Label>End Date</Form.Label>
-            <Form.Control
-              type="date"
-              name="duedate"
-              placeholder="end date"
-              value={dateTo}
-              onChange={(e) => setdateTo(e.target.value)}
-            />
-            <Form.Text className="text-muted">end date</Form.Text>
-          </Form.Group>
-          <Button onClick={() => {createManifest()}}>Create Manifest</Button>
-        </Form>
-        { printData === true ?   showTable(itemsDB) : <img src={filesvg} alt="" /> }
-      </div>
+  const sortDataByDate = (dtaa) => {
+    const startDate = new Date(dateFrom);
+    const endDate = new Date(dateTo);
+
+    const returndata = dtaa.filter((a) => {
+      const date = new Date(a.paid[0].datePaid);
+      return date >= startDate && date <= endDate;
+    });
+
+    setitemsDB(returndata);
+  };
+
+  //create new xlsx file and save to pc
+  const writeToExcelFile = (fileExtension, fileName) => {
+    const table = document.getElementById("tablegen");
+    const wb = XLSX.utils.table_to_book(table, { sheet: "marybeth_sheet1" });
+    return XLSX.writeFile(
+      wb,
+      fileName + "." + fileExtension || "sheetname." + (fileExtension || "xlsx")
     );
+  };
+
+  const createManifest = () => {
+    sortDataByDate(itemsDB);
+    setprintData(!printData);
+  };
+
+  return (
+    <div className="center-container">
+      <Form className="fff">
+        <Form.Group controlId="duedate">
+          <Form.Label>Start Date</Form.Label>
+          <Form.Control
+            type="date"
+            name="duedate"
+            placeholder="start date"
+            value={dateFrom}
+            onChange={(e) => setdateFrom(e.target.value)}
+          />
+          <Form.Text className="text-muted">start date</Form.Text>
+        </Form.Group>
+
+        <Form.Group controlId="duedate">
+          <Form.Label>End Date</Form.Label>
+          <Form.Control
+            type="date"
+            name="duedate"
+            placeholder="end date"
+            value={dateTo}
+            onChange={(e) => setdateTo(e.target.value)}
+          />
+          <Form.Text className="text-muted">end date</Form.Text>
+        </Form.Group>
+        {disableClick()}
+      </Form>
+      <div className="print-view">
+      {printData === true ? (
+        showTable(itemsDB)
+      ) : (
+        <div className="timg">
+          <img src={filesvg} alt="" />
+        </div>
+      )}
+      
+    <div className="prtbtn">
+    <Button
+      onClick={() =>
+        writeToExcelFile(
+          "xlsx",
+          `manifest ${convert(new Date(Date.now()))}`
+        )
+      }
+    >
+      Print (Excel)
+    </Button>
+    </div>
+    </div>
+    </div>
+  );
 };
 
 export default ManifestMain;

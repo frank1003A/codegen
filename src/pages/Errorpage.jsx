@@ -3,7 +3,7 @@ import errimg from '../assets/svg/105.svg'
 
 const Errorpage = () => {
     return (
-        <div>
+        <div className="errpage">
             <img src={errimg} alt="" />
         </div>
     )

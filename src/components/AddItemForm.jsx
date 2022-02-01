@@ -82,7 +82,7 @@ const AddItemForm = () => {
   };
 
   return (
-    <div className="center-container">
+    <div className="mid-container">
       <Form className="form-item">
         <Form.Group className="mb-3" controlId="formBasicEmail">
           <Form.Label>WhatsApp Number</Form.Label>

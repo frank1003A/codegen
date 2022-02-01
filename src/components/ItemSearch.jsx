@@ -30,7 +30,7 @@ const ItemSearch = () => {
   }, []);
 
   return (
-    <div className="table" > 
+    <div className="s-container" > 
     <div className="ribbons">
     <CardNoButton cardTitle={'Number of items' + ' : ' + itemTable.length}/>
     </div>
@@ -70,3 +70,5 @@ const ItemSearch = () => {
 };
 
 export default ItemSearch;
+
+

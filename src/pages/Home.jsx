@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 const Home = () => {
     let navigate = useNavigate();
     return (
-        <div className="center-container">
+        <div className="page-container">
             <Card cardTitle='create manifest' cardText='Create manifest from bank file' navFunc={() => navigate('/create-manifest')}/>
             <Card cardTitle='create manifest' cardText='Create manifest from items' navFunc={() => navigate('/create-manifest/manifest')}/>
         </div>

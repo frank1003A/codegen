@@ -84,13 +84,13 @@ const UpdateCustomer = () => {
     const disableClick = () => {
         if (!(customerFullname && whatsappNo)) {
           return (
-            <Button variant="primary" type="submit" disabled>
+            <Button variant="primary" type="submit" style={{width: '100%'}}  disabled>
               update
             </Button>
           );
         } else {
           return (
-            <Button onClick={() => updateCustomer()} variant="primary" type="button">
+            <Button onClick={() => updateCustomer()} variant="primary" style={{width: '100%'}} type="button">
               update
             </Button>
           );
@@ -99,7 +99,8 @@ const UpdateCustomer = () => {
 
     return (
         <div className="flex-container">
-      <Form style={{width: '500px'}}>
+          <div className="fform">
+          <Form style={{width: '500px'}}>
         <Form.Group className="mb-3" controlId="formBasicEmail">
           <Form.Label>Customer Fullname</Form.Label>
           <Form.Control
@@ -150,9 +151,11 @@ const UpdateCustomer = () => {
             }}
           />
         </Form.Group>
-        {disableClick()}
+        <div className="btnsect">{disableClick()}</div>
       </Form>
-      <Table striped bordered hover size="sm" style={{width: '60%'}} >
+          </div>
+          <div className="tablee">
+          <Table striped bordered hover size="sm" >
         <thead>
           <tr>
             <th>Customer Name</th>
@@ -173,6 +176,7 @@ const UpdateCustomer = () => {
             })}
         </tbody>
       </Table>
+          </div>
     </div>
     )
 }

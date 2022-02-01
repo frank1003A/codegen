@@ -1,10 +1,9 @@
 import React from 'react'
-import { Button, Modal } from 'bootstrap';
+import { Button, Modal } from 'react-bootstrap';
 import { useState, useEffect } from "react";
 
 
 const ModalC = () => {
-    function Example() {
         const [show, setShow] = useState(false);
       
         const handleClose = () => setShow(false);
@@ -38,7 +37,6 @@ const ModalC = () => {
             </Modal>
           </>
         );
-      }
 }
 
 export default ModalC

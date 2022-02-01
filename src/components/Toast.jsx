@@ -1,30 +1,33 @@
-function Example() {
-    const [showA, setShowA] = useState(true);
-    const [showB, setShowB] = useState(true);
-  
-    const toggleShowA = () => setShowA(!showA);
-    const toggleShowB = () => setShowB(!showB);
-  
+import React from 'react';
+import {Toast} from 'react-bootstrap'
+import { useState } from "react";
+import { Button, Col, Row } from "react-bootstrap";
+
+const Toasts = ({toastHeader, toastBody, showToast, toggleshowToast}) => {
     return (
-      <Row>
         <Col md={6} className="mb-2">
-          <Button onClick={toggleShowA} className="mb-2">
-            Toggle Toast <strong>with</strong> Animation
-          </Button>
-          <Toast show={showA} onClose={toggleShowA}>
+          <Toast show={showToast} onClose={toggleshowToast}>
             <Toast.Header>
               <img
                 src="holder.js/20x20?text=%20"
                 className="rounded me-2"
                 alt=""
               />
-              <strong className="me-auto">Bootstrap</strong>
+              <strong className="me-auto">{toastHeader}</strong>
               <small>11 mins ago</small>
             </Toast.Header>
-            <Toast.Body>Woohoo, you're reading this text in a Toast!</Toast.Body>
+            <Toast.Body>{toastBody}</Toast.Body>
           </Toast>
         </Col>
-        <Col md={6} className="mb-2">
+    );
+};
+
+export default Toasts;
+
+
+/**
+ 
+<Col md={6} className="mb-2">
           <Button onClick={toggleShowB} className="mb-2">
             Toggle Toast <strong>without</strong> Animation
           </Button>
@@ -41,8 +44,4 @@ function Example() {
             <Toast.Body>Woohoo, you're reading this text in a Toast!</Toast.Body>
           </Toast>
         </Col>
-      </Row>
-    );
-  }
-  
-  render(<Example />);
+ */
